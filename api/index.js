@@ -1,26 +1,17 @@
-const express = require('express');
-const path = require('path');
-const app = express();
+const express = require('express')
+const cors = require('cors')
+const bodyParser = require('body-parser')
 
-app.use(express.json());
-app.use(express.static(path.join(__dirname, 'public')));
+const { getUsers, createUser } = require('./api/users')
 
-let users = [];
+const app = express()
+app.use(cors())
+app.use(bodyParser.json())
 
-app.post('/users', (req, res) => {
-  const { name, email } = req.body;
-  if (!name || !email) {
-    return res.status(400).json({ error: 'Nome e email são obrigatórios' });
-  }
-  users.push({ name, email });
-  res.status(201).json({ message: 'Usuário criado' });
-});
+app.get('/users', getUsers)
+app.post('/users', createUser)
 
-app.get('/users', (req, res) => {
-  res.json(users);
-});
-
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Servidor rodando em http://localhost:${PORT}`);
-});
+const port = process.env.PORT || 3000
+app.listen(port, () => {
+  console.log(`Servidor rodando na porta ${port}`)
+})
